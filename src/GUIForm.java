@@ -9,14 +9,14 @@ public class GUIForm {
     private JButton button1;
     private JTable table1;
 
-//    public GUIForm() {
-//        button1.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent actionEvent) {
-//                JOptionPane.showMessageDialog(null,"Hello World");
-//            }
-//        });
-//    }
+    public GUIForm() {
+        button1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JOptionPane.showMessageDialog(null,"Hello World");
+            }
+        });
+    }
 
     public static void main(String[] args) throws UnknownHostException {
         JFrame frame = new JFrame("IP Scanner");
