@@ -106,8 +106,6 @@ public class Scanner_ip {
         // Printing in dotted decimal format
         System.out.println("Broadcast Address : "
                 + br[0] + "." + br[1] + "." + br[2] + "." + br[3]);
-    //    String firstip = String.format("%s.%s.%s.%s",nt[0],nt[1],nt[2],nt[3]);
-    //    String lastip = String.format("%s.%s.%s.%s",br[0],br[1],br[2],br[3]);
         int[][] ips = {nt,br};
         return ips;
     }
