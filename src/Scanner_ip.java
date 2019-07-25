@@ -18,32 +18,23 @@ public class Scanner_ip {
             } else {
                 int n = networkInterface.getInterfaceAddresses().get(networkInterface.getInterfaceAddresses().size()-1).getNetworkPrefixLength();
                 System.out.println("My Device IP: " + myip + "\n");
-                System.out.println("Starting IP: "+"Ending IP: ");
                 int ips[][] = ipcalculator(myip,n);
                 int[] nt= ips[0];
                 int[] br = ips[1];
-//                System.out.println(nt[0]+"\t"+br[0]);
-//                System.out.println(nt[1]+"\t"+br[1]);
-//                System.out.println(nt[2]+"\t"+br[2]);
-//                System.out.println(nt[3]+"\t"+br[3]);
                 System.out.println("Search log:");
-              //  nt[0]=10; nt[1]=10;nt[2]=236;nt[3]=1;
-              //  br[0]=10; br[1]=10;br[2]=236;br[3]=178;
                 for (int j = nt[0]; j <= br[0]; ++j){
                     for (int k = nt[1]; k <= br[1]; ++k) {
                         for (int l = nt[2]; l <= br[2]; ++l) {
                             for (int i = nt[3]; i <= br[3]; ++i) {
-
-                              //  System.out.println(j+" "+k+" "+l+" "+i);
-                                    try {
+                                 try {
                                         InetAddress addr = InetAddress.getByName(String.format("%s.%s.%s.%s", j, k, l, i));
 
                                         if (addr.isReachable(500)) {
                                             System.out.println("Available: " + addr.getHostAddress());
                                             Available_Devices.add(addr.getHostAddress());
                                         }
-//                                        else
-//                                            System.out.println("Not available: " + addr.getHostAddress());
+                                        else
+                                            System.out.println("Not available: " + addr.getHostAddress());
 
                                     } catch (IOException ioex) {
                                     }
