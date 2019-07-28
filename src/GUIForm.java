@@ -1,12 +1,11 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.*;
 
 public class GUIForm {
     JFrame f;
+    private JPanel panel;
     private JTable table;
     private JLabel ipfrom;
     private static int connected = 0;

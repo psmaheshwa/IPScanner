@@ -51,7 +51,6 @@ public class Scanner_ip {
         // Printing in dotted decimal format
         System.out.println("Broadcast Address : "
                 + br[0] + "." + br[1] + "." + br[2] + "." + br[3]);
-        int[][] ips = {nt,br};
-        return ips;
+        return new int[][]{nt,br};
     }
 }
