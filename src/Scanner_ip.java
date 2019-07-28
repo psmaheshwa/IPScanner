@@ -1,64 +1,8 @@
-import java.io.IOException;
-import java.net.*;
-import java.util.ArrayList;
 
 
 public class Scanner_ip {
-    public static ArrayList<String> Available_Devices = new ArrayList<>();
-    public static ArrayList<String> non_Available_Devices = new ArrayList<>();
 
-    public static ArrayList<String> ipscanner() throws UnknownHostException {
-
-        try (final DatagramSocket socket = new DatagramSocket()) {
-            socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
-            InetAddress machine = socket.getLocalAddress();
-            NetworkInterface networkInterface = NetworkInterface.getByInetAddress(machine);
-            String myip = machine.getHostName();
-            if (myip.equals("127.0.0.1")) {
-                System.out.println("This PC is not connected to any network!");
-            } else {
-                int n = networkInterface.getInterfaceAddresses().get(networkInterface.getInterfaceAddresses().size()-1).getNetworkPrefixLength();
-                System.out.println("My Device IP: " + myip + "\n");
-                int ips[][] = ipcalculator(myip,n);
-                int[] nt= ips[0];
-                int[] br = ips[1];
-                System.out.println("Search log:");
-                for (int j = nt[0]; j <= br[0]; ++j){
-                    for (int k = nt[1]; k <= br[1]; ++k) {
-                        for (int l = nt[2]; l <= br[2]; ++l) {
-                            for (int i = nt[3]; i <= br[3]; ++i) {
-                                 try {
-                                        InetAddress addr = InetAddress.getByName(String.format("%s.%s.%s.%s", j, k, l, i));
-
-                                        if (addr.isReachable(50)) {
-                                            System.out.println("Available: " + addr.getHostAddress());
-                                            Available_Devices.add(addr.getHostAddress());
-                                        }
-                                        else
-                                            System.out.println("Not available: " + addr.getHostAddress());
-                                           // non_Available_Devices.add(addr.getHostAddress());
-                                    } catch (IOException ioex) {
-                                    }
-                            }
-                        }
-                    }
-                }
-
-
-
-
-                // print the list of available devices
-                System.out.println("\nAll Connected devices(" + Available_Devices.size() + "):");
-                for (int i = 0; i < Available_Devices.size(); ++i) System.out.println(Available_Devices.get(i));
-            }
-
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
-        return Available_Devices;
-    }
-
-    private static int[][] ipcalculator(String ip, int subnet_length) {
+    static int[][] ipcalculator(String ip, int subnet_length) {
         String str[] = new String[4];
         str = ip.split("\\.");
         int[] b = new int[32];
