@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class Scanner_ip {
     public static ArrayList<String> Available_Devices = new ArrayList<>();
+    public static ArrayList<String> non_Available_Devices = new ArrayList<>();
 
     public static ArrayList<String> ipscanner() throws UnknownHostException {
 
@@ -29,13 +30,13 @@ public class Scanner_ip {
                                  try {
                                         InetAddress addr = InetAddress.getByName(String.format("%s.%s.%s.%s", j, k, l, i));
 
-                                        if (addr.isReachable(500)) {
+                                        if (addr.isReachable(50)) {
                                             System.out.println("Available: " + addr.getHostAddress());
                                             Available_Devices.add(addr.getHostAddress());
                                         }
                                         else
                                             System.out.println("Not available: " + addr.getHostAddress());
-
+                                           // non_Available_Devices.add(addr.getHostAddress());
                                     } catch (IOException ioex) {
                                     }
                             }

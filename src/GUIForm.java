@@ -1,34 +1,40 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class GUIForm {
+    JFrame f;
     private JPanel panel;
-    private JButton button1;
-    private JTable table1;
-//
-//    public GUIForm() {
-//        button1.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent actionEvent) {
-//                JOptionPane.showMessageDialog(null,"Hello World");
-//            }
-//        });
-//    }
+    private JTable table;
+
+    GUIForm(){
+        f=new JFrame();
+        DefaultTableModel model = new DefaultTableModel();
+        String column[]={"ID","ADDRESS","STATUS"};
+        model.setColumnIdentifiers(column);
+        table=new JTable();
+        table.setModel(model);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.setFillsViewportHeight(true);
+        JScrollPane scroll = new JScrollPane(table);
+        scroll.setHorizontalScrollBarPolicy(
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scroll.setVerticalScrollBarPolicy(
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        for (int i =0; i< (Scanner_ip.Available_Devices).size();i++){
+            model.addRow(new Object[]{i+1,Scanner_ip.Available_Devices.get(i),"UP"});
+        }
+        f.add(scroll);
+        f.setSize(300,400);
+        f.setVisible(true);
+    }
 
     public static void main(String[] args) throws UnknownHostException {
-        JFrame frame = new JFrame("IP Scanner");
-        frame.setContentPane(new GUIForm().panel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-        Scanner_ip scanner = new Scanner_ip();
-        JTable table1 = new JTable();
-        ArrayList<String> avail = Scanner_ip.ipscanner();
-
-
+        Scanner_ip.ipscanner();
+        new GUIForm();
 
     }
 
