@@ -20,9 +20,11 @@ public class UIForm extends JFrame{
     private JLabel deviceiplabel;
     private JLabel iprangelable;
     private JLabel tolabel;
+    private JTable table1;
     private boolean notifyloop = false;
     private boolean scanloop = false;
     private Thread runner = null;
+    private String[][] data;
 
 
     private DefaultTableModel model = new DefaultTableModel() {
@@ -42,6 +44,11 @@ public class UIForm extends JFrame{
 
     void scanner(){
         System.out.println("Search log:");
+        table1.setModel(model);
+        model.addColumn("IP Address");
+        model.addColumn("Status");
+        table1.setAutoCreateRowSorter(true);
+
 
         String startingip = fromTextField.getText();
         String endingip = toTextField.getText();
@@ -56,16 +63,18 @@ public class UIForm extends JFrame{
             for (int j = Integer.parseInt(nt[0]); j <= Integer.parseInt(br[0]); ++j) {
                 for (int k = Integer.parseInt(nt[1]); k <= Integer.parseInt(br[1]); ++k) {
                     for (int l = Integer.parseInt(nt[2]); l <= Integer.parseInt(br[2]); ++l) {
-                        for (int i = Integer.parseInt(nt[3]); i <= Integer.parseInt(br[3]); ++i) {
+                        for (int i = Integer.parseInt(nt[3])+1; i <= Integer.parseInt(br[3]); ++i) {
                                 try {
                                     InetAddress addr = InetAddress.getByName(String.format("%s.%s.%s.%s", j, k, l, i));
 
                                     if (addr.isReachable(50)) {
-                                        model.addRow(new Object[]{++count, addr.getHostAddress(), "UP"});
+                                        model.addRow(new Object[]{addr.getHostAddress(), "UP"});
+                                        ++count;
                                         System.out.println("Active : " + addr.getHostAddress());
                                         ++connected;
                                     } else {
-                                        model.addRow(new Object[]{++count, addr.getHostAddress(), "DOWN"});
+                                        model.addRow(new Object[]{ addr.getHostAddress(), "DOWN"});
+                                        ++count;
                                         System.out.println("Inactive : " + addr.getHostAddress());
                                     }
                                 } catch (IOException ioex) {
@@ -99,17 +108,7 @@ public class UIForm extends JFrame{
 
 
    UIForm(){
-        panel = new JPanel();
         MailAlert mailAlert = new MailAlert();
-        String[] column = {"ID", "ADDRESS", "STATUS"};
-        JScrollPane scroll = new JScrollPane(table);
-
-        model.setColumnIdentifiers(column);
-
-        table.setModel(model);
-        panel.add(scroll);
-
-
         this.setTitle("IP Scanner");
         this.setSize(900, 500);
         this.setVisible(true);
@@ -150,7 +149,12 @@ public class UIForm extends JFrame{
                             start();
                         }else {
                             scanloop = false;
-                            startButton.setText("Start");
+                            startButton.setText("Restart");
+                            model = new DefaultTableModel() {
+                                public boolean isCellEditable(int rowIndex, int mColIndex) {
+                                    return false;
+                                }
+                            };
                             stop();
                         }
                     }
