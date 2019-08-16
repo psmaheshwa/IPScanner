@@ -28,7 +28,7 @@
           <text value="Start"/>
         </properties>
       </component>
-      <component id="276bd" class="javax.swing.JLabel">
+      <component id="276bd" class="javax.swing.JLabel" binding="deviceiplabel">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -52,7 +52,7 @@
         </constraints>
         <properties/>
       </component>
-      <component id="2cbfe" class="javax.swing.JLabel">
+      <component id="2cbfe" class="javax.swing.JLabel" binding="tolabel">
         <constraints>
           <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -86,7 +86,7 @@
         </constraints>
         <properties/>
       </component>
-      <component id="7131d" class="javax.swing.JLabel">
+      <component id="7131d" class="javax.swing.JLabel" binding="enteriplabel">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -94,7 +94,7 @@
           <text value="Enter IP "/>
         </properties>
       </component>
-      <component id="71ffc" class="javax.swing.JLabel">
+      <component id="71ffc" class="javax.swing.JLabel" binding="iprangelable">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>

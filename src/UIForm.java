@@ -16,6 +16,10 @@ public class UIForm extends JFrame{
     private JLabel deviceip;
     private JTextField getnoteip;
     private JButton notify;
+    private JLabel enteriplabel;
+    private JLabel deviceiplabel;
+    private JLabel iprangelable;
+    private JLabel tolabel;
     private boolean notifyloop = false;
     private boolean scanloop = false;
     private Thread runner = null;
@@ -95,10 +99,16 @@ public class UIForm extends JFrame{
 
 
    UIForm(){
+        panel = new JPanel();
+        MailAlert mailAlert = new MailAlert();
         String[] column = {"ID", "ADDRESS", "STATUS"};
         JScrollPane scroll = new JScrollPane(table);
+
         model.setColumnIdentifiers(column);
+
         table.setModel(model);
+        panel.add(scroll);
+
 
         this.setTitle("IP Scanner");
         this.setSize(900, 500);
@@ -171,6 +181,7 @@ public class UIForm extends JFrame{
                                             JOptionPane.showMessageDialog(frame, wntip + " disconnected!",
                                                     "Notifier",
                                                     JOptionPane.WARNING_MESSAGE);
+                                            mailAlert.sendMail(wntip);
                                             notify.setText("Notify");
                                             break;
                                         }
