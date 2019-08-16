@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="commonsemail" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="commonsemail" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
   <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="--add-modules java.xml.bind" />
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="IPScanner" options="--add-exports=jdk.scripting.nashorn/jdk.nashorn.internal.objects=ALL-UNNAMED" />
+      <module name="commonsemail" options="" />
     </option>
   </component>
 </project>

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/IPScanner.iml" filepath="$PROJECT_DIR$/IPScanner.iml" />
+      <module fileurl="file://$PROJECT_DIR$/commonsemail/commonsemail.iml" filepath="$PROJECT_DIR$/commonsemail/commonsemail.iml" />
     </modules>
   </component>
 </project>
