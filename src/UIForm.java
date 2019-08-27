@@ -25,6 +25,8 @@ public class UIForm extends JFrame{
     private boolean scanloop = false;
     private Thread runner = null;
     private String[][] data;
+    private int connected = 0;
+    private int count = 0;
 
 
     private DefaultTableModel model = new DefaultTableModel() {
@@ -48,6 +50,8 @@ public class UIForm extends JFrame{
         model.addColumn("IP Address");
         model.addColumn("Status");
         table1.setAutoCreateRowSorter(true);
+        table1.setShowHorizontalLines(false);
+        table1.setShowVerticalLines(false);
 
 
         String startingip = fromTextField.getText();
@@ -58,8 +62,6 @@ public class UIForm extends JFrame{
         String[] br= endingip.split("\\.");
 
         if(validate(startingip) && validate(endingip)){
-            int connected = 0;
-            int count = 0;
             for (int j = Integer.parseInt(nt[0]); j <= Integer.parseInt(br[0]); ++j) {
                 for (int k = Integer.parseInt(nt[1]); k <= Integer.parseInt(br[1]); ++k) {
                     for (int l = Integer.parseInt(nt[2]); l <= Integer.parseInt(br[2]); ++l) {
@@ -67,13 +69,29 @@ public class UIForm extends JFrame{
                                 try {
                                     InetAddress addr = InetAddress.getByName(String.format("%s.%s.%s.%s", j, k, l, i));
 
-                                    if (addr.isReachable(50)) {
-                                        model.addRow(new Object[]{addr.getHostAddress(), "UP"});
+                                    if (addr.isReachable(500)) {
+                                        NetworkInterface network = NetworkInterface.getByInetAddress(addr);
+                                        if(network != null) {
+                                            byte[] mac = network.getHardwareAddress();
+                                            StringBuilder sb = new StringBuilder();
+                                            for (int f = 0; f < mac.length; f++) {
+                                                sb.append(String.format("%02X%s", mac[f], (f < mac.length - 1) ? "-" : ""));
+                                                model.addRow(new Object[]{addr.getHostAddress(), sb.toString()});
+                                            }
+                                        }else
+                                        {
+                                            if (addr.getHostAddress()==String.format("%s.%s.%s.%s", j, k, l, i)){
+                                                model.addRow(new Object[]{addr.getHostAddress(), "UP"});
+
+                                            }else
+                                                model.addRow(new Object[]{addr.getHostAddress(), addr.getHostName()});
+
+                                        }
                                         ++count;
                                         System.out.println("Active : " + addr.getHostAddress());
                                         ++connected;
                                     } else {
-                                        model.addRow(new Object[]{ addr.getHostAddress(), "DOWN"});
+                                        model.addRow(new Object[]{ addr.getHostAddress(), "Down"});
                                         ++count;
                                         System.out.println("Inactive : " + addr.getHostAddress());
                                     }
@@ -102,6 +120,10 @@ public class UIForm extends JFrame{
 
     public void stop() {
         runner.stop();
+        JOptionPane.showMessageDialog(frame, "No.of.Device Scanned : "+count+"\nNo.of.Device Connected : "+connected,
+                "Result",
+                JOptionPane.INFORMATION_MESSAGE);
+        connected = count =0;
         runner = null;
     }
 
