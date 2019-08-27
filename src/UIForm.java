@@ -147,11 +147,11 @@ public class UIForm extends JFrame{
             socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
             InetAddress machine = socket.getLocalAddress();
             NetworkInterface networkInterface = NetworkInterface.getByInetAddress(machine);
-            String myip = machine.getHostName();
+            String myip = machine.getHostAddress();
             if (myip.equals("127.0.0.1")) {
                 System.out.println("This PC is not connected to any network!");
             } else {
-                int n = networkInterface.getInterfaceAddresses().get(networkInterface.getInterfaceAddresses().size() - 1).getNetworkPrefixLength();
+                int n = networkInterface.getInterfaceAddresses().get(0).getNetworkPrefixLength();
                 System.out.println("My Device IP: " + myip + "\n");
                 int[][] ips = Scanner_ip.ipcalculator(myip, n);
                 int[] nt = ips[0];
