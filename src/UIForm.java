@@ -8,26 +8,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class UIForm extends JFrame{
-    JFrame frame;
+    private JFrame frame;
     private JPanel panel;
     private JTextField fromTextField;
     private JTextField toTextField;
     private JButton startButton;
-    private JTable table;
     private JLabel deviceip;
     private JTextField getnoteip;
     private JButton notify;
-    private JLabel enteriplabel;
-    private JLabel deviceiplabel;
-    private JLabel iprangelable;
-    private JLabel tolabel;
     private JTable table1;
     private JButton shutdownButton;
     private JTextField shutdownip;
     private boolean notifyloop = false;
     private boolean scanloop = false;
     private Thread runner = null;
-    private String[][] data;
     private int connected = 0;
     private int count = 0;
     private String recipent;
@@ -52,7 +46,7 @@ public class UIForm extends JFrame{
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
                    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
-    public static boolean validateEmail(String emailStr) {
+    private static boolean validateEmail(String emailStr) {
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
         return matcher.find();
     }
@@ -113,7 +107,7 @@ public class UIForm extends JFrame{
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-    public void start() {
+    private void start() {
         if (runner == null)
         {
             runner = new Thread(this::scanner);
@@ -121,7 +115,7 @@ public class UIForm extends JFrame{
         }
     }
 
-    public void stop() {
+    private void stop() {
         runner.stop();
         JOptionPane.showMessageDialog(frame, "No.of.Device Scanned : "+count+"\nNo.of.Device Connected : "+connected,
                 "Result",
@@ -248,7 +242,7 @@ public class UIForm extends JFrame{
 
                                 @Override
                                 protected Object doInBackground() throws Exception {
-                                        power.down(shutip);
+                                    power.down(shutip);
                                     JOptionPane.showMessageDialog(frame, shutip + " Machine Successfully shutdown!",
                                             "Power Off",
                                             JOptionPane.INFORMATION_MESSAGE);
@@ -262,7 +256,6 @@ public class UIForm extends JFrame{
                     }
                 });
             }
-
         }
         catch (SocketException | UnknownHostException e) {
             e.printStackTrace();
