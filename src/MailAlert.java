@@ -4,10 +4,7 @@ import javax.mail.Session;
 import java.util.Properties;
 
 public class MailAlert {
-    public void sendMail(String ip) {
-        final String fromEmail = "maheshwaran.cs17@bitsathy.ac.in";
-        final String password = "Super Star";
-        final String toEmail = "psmaheshwa@gmail.com";
+    public void sendMail(String ip,String toEmail,String password,String fromEmail) {
 
         System.out.println("TLSEmail Start");
         Properties props = new Properties();

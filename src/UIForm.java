@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class UIForm extends JFrame{
@@ -29,6 +30,9 @@ public class UIForm extends JFrame{
     private String[][] data;
     private int connected = 0;
     private int count = 0;
+    private String recipent;
+    private String email;
+    private String password;
 
 
     private DefaultTableModel model = new DefaultTableModel() {
@@ -41,12 +45,19 @@ public class UIForm extends JFrame{
     private static final Pattern PATTERN = Pattern.compile(
             "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
 
-    public static boolean validate(final String ip) {
+    private static boolean validate(final String ip) {
         return PATTERN.matcher(ip).matches();
     }
 
+    private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+                   Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
-    void scanner(){
+    public static boolean validateEmail(String emailStr) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
+        return matcher.find();
+    }
+
+    private void scanner(){
         System.out.println("Search log:");
         table1.setModel(model);
         model.addColumn("IP Address");
@@ -180,14 +191,26 @@ public class UIForm extends JFrame{
                 public void actionPerformed(ActionEvent actionEvent) {
                     String wntip = getnoteip.getText();
                     if(validate(wntip)) {
-                        if(!notifyloop){
-                            notify.setText("Stop");
-                            notifyloop = true;
+                        JFrame notifier = new JFrame("email Credentials");
+                        recipent = JOptionPane.showInputDialog(frame, "Enter Recipient email!");
+                        email = JOptionPane.showInputDialog(frame, "Enter your email ");
+                        password = JOptionPane.showInputDialog(frame, "Enter your password!");
+                        if (validateEmail(email) && validateEmail(recipent)){
+                            if(!notifyloop){
+                                notify.setText("Stop");
+                                notifyloop = true;
+                            }else{
+                                notifyloop = false;
+                                notify.setText("Notify");
+                                JOptionPane.showMessageDialog(frame, wntip + " disconnected!",
+                                        "Notifier",
+                                        JOptionPane.WARNING_MESSAGE);
+                            }
                         }else{
-                            notifyloop = false;
-                            notify.setText("Notify");
+                            JOptionPane.showMessageDialog(frame,"invalid email!",
+                                    "Notifier",
+                                    JOptionPane.WARNING_MESSAGE);
                         }
-
                         try {
                             InetAddress addr = InetAddress.getByName(wntip);
                             new SwingWorker(){
@@ -197,12 +220,11 @@ public class UIForm extends JFrame{
                                     while (notifyloop) {
                                         if (addr.isReachable(500)) {
                                         } else{
-                                            JOptionPane.showMessageDialog(frame, wntip + " disconnected!",
-                                                    "Notifier",
-                                                    JOptionPane.WARNING_MESSAGE);
-                                            mailAlert.sendMail(wntip);
-                                            notify.setText("Notify");
-                                            break;
+                                            if(!(email == null || password == null || recipent == null)){
+                                                mailAlert.sendMail(wntip,email,password,recipent);
+                                                notify.setText("Notify");
+                                                break;
+                                            }
                                         }
                                     }
                                     return null;
@@ -217,7 +239,6 @@ public class UIForm extends JFrame{
                 }
 
             });
-
                 shutdownButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
@@ -240,9 +261,6 @@ public class UIForm extends JFrame{
                                 JOptionPane.ERROR_MESSAGE);
                     }
                 });
-
-                
-
             }
 
         }
