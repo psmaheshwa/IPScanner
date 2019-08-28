@@ -135,12 +135,7 @@ public class UIForm extends JFrame{
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setContentPane(panel);
         this.pack();
-        //************************************************//
 
-
-
-
-        //***********************IP FETCHER*******************//
         try (final DatagramSocket socket = new DatagramSocket()) {
             socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
             InetAddress machine = socket.getLocalAddress();
