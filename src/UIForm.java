@@ -219,7 +219,7 @@ public class UIForm extends JFrame{
                                     return null;
                                 }
                             }.execute();
-                        } catch (IOException ioex) {
+                        } catch (IOException ignored) {
                         }
                     }else
                         JOptionPane.showMessageDialog(frame, wntip + " not a valid IP!",
