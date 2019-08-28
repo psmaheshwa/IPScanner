@@ -71,24 +71,14 @@ public class UIForm extends JFrame{
                                 try {
                                     InetAddress addr = InetAddress.getByName(String.format("%s.%s.%s.%s", j, k, l, i));
 
-                                    if (addr.isReachable(1500)) {
-                                        NetworkInterface network = NetworkInterface.getByInetAddress(addr);
-                                        if(network != null) {
-                                            byte[] mac = network.getHardwareAddress();
-                                            StringBuilder sb = new StringBuilder();
-                                            for (int f = 0; f < mac.length; f++) {
-                                                sb.append(String.format("%02X%s", mac[f], (f < mac.length - 1) ? "-" : ""));
-                                                model.addRow(new Object[]{addr.getHostAddress(), sb.toString()});
-                                            }
-                                        }else
-                                        {
+                                    if (addr.isReachable(1000)) {
                                             if (addr.getHostAddress()==String.format("%s.%s.%s.%s", j, k, l, i)){
                                                 model.addRow(new Object[]{addr.getHostAddress(), "UP"});
 
                                             }else
                                                 model.addRow(new Object[]{addr.getHostAddress(), addr.getHostName()});
 
-                                        }
+
                                         ++count;
                                         System.out.println("Active : " + addr.getHostAddress());
                                         ++connected;
@@ -154,7 +144,7 @@ public class UIForm extends JFrame{
             if (myip.equals("127.0.0.1")) {
                 System.out.println("This PC is not connected to any network!");
             } else {
-                int n = networkInterface.getInterfaceAddresses().get(0).getNetworkPrefixLength();
+                int n = networkInterface.getInterfaceAddresses().get(networkInterface.getInterfaceAddresses().size() - 1).getNetworkPrefixLength();
                 System.out.println("My Device IP: " + myip + "\n");
                 int[][] ips = Scanner_ip.ipcalculator(myip, n);
                 int[] nt = ips[0];
@@ -238,10 +228,12 @@ public class UIForm extends JFrame{
                                 @Override
                                 protected Object doInBackground() throws Exception {
                                         power.down(shutip);
+                                        shutdownButton.setText("Wait..");
                                     JOptionPane.showMessageDialog(frame, shutip + " Machine Successfully shutdown!",
                                             "Power Off",
                                             JOptionPane.INFORMATION_MESSAGE);
                                     shutdownip.setText("");
+                                    shutdownButton.setText("Shutdown");
                                     return null;
                                 }
 
