@@ -228,12 +228,9 @@ public class UIForm extends JFrame{
                                 @Override
                                 protected Object doInBackground() throws Exception {
                                         power.down(shutip);
-                                        shutdownButton.setText("Wait..");
                                     JOptionPane.showMessageDialog(frame, shutip + " Machine Successfully shutdown!",
                                             "Power Off",
                                             JOptionPane.INFORMATION_MESSAGE);
-                                    shutdownip.setText("");
-                                    shutdownButton.setText("Shutdown");
                                     return null;
                                 }
 
