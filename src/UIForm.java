@@ -1,5 +1,7 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -59,6 +61,7 @@ public class UIForm extends JFrame{
         System.out.println("Search log:");
         table1.setModel(model);
         model.addColumn("IP Address");
+        model.addColumn("MAC");
         model.addColumn("Status");
         table1.setAutoCreateRowSorter(true);
         table1.setShowHorizontalLines(false);
@@ -76,23 +79,41 @@ public class UIForm extends JFrame{
             for (int j = Integer.parseInt(nt[0]); j <= Integer.parseInt(br[0]); ++j) {
                 for (int k = Integer.parseInt(nt[1]); k <= Integer.parseInt(br[1]); ++k) {
                     for (int l = Integer.parseInt(nt[2]); l <= Integer.parseInt(br[2]); ++l) {
-                        for (int i = Integer.parseInt(nt[3]); i <= Integer.parseInt(br[3]); ++i) {
+                        for (int i = Integer.parseInt((nt[3])); i <= Integer.parseInt(br[3]); ++i) {
                                 try {
                                     InetAddress addr = InetAddress.getByName(String.format("%s.%s.%s.%s", j, k, l, i));
 
-                                    if (addr.isReachable(1000)) {
-                                            if (addr.getHostAddress()==String.format("%s.%s.%s.%s", j, k, l, i)){
-                                                model.addRow(new Object[]{addr.getHostAddress(), "UP"});
+                                    if (addr.isReachable(150)) {
+                                            if (addr.getHostAddress().equals(String.format("%s.%s.%s.%s", j, k, l, i))){
+
+
+                                                try{
+                                                    NetworkInterface network = NetworkInterface.getByInetAddress(addr);
+                                                    byte[] macArray = network.getHardwareAddress();  //get Harware address Array
+                                                    StringBuilder str = new StringBuilder();
+
+                                                    for (int index = 0; index < macArray.length; index++) {
+                                                        str.append(String.format("%02X%s", macArray[index], (index < macArray.length - 1) ? "-" : ""));
+                                                    }
+                                                    String macAddress=str.toString();
+                                                    model.addRow(new Object[]{addr.getHostAddress(), macAddress, "UP"});
+
+                                                    System.out.println(macAddress);
+                                                }
+                                                catch(Exception E) {
+                                                    E.printStackTrace();
+                                                    model.addRow(new Object[]{addr.getHostAddress(), "n\\a", "UP"});
+                                                }
 
                                             }else
-                                                model.addRow(new Object[]{addr.getHostAddress(), addr.getHostName()});
+                                                model.addRow(new Object[]{addr.getHostAddress(), "n\\a", addr.getHostName()});
 
 
                                         ++count;
                                         System.out.println("Active : " + addr.getHostAddress());
                                         ++connected;
                                     } else {
-                                        model.addRow(new Object[]{ addr.getHostAddress(), "Down"});
+                                        model.addRow(new Object[]{ addr.getHostAddress(), "n\\a", "Down"});
                                         ++count;
                                         System.out.println("Inactive : " + addr.getHostAddress());
                                     }
@@ -128,9 +149,16 @@ public class UIForm extends JFrame{
         runner = null;
     }
 
+    private void mouseclicked(java.awt.event.MouseEvent mouseEventt){
+        DefaultTableModel model = (DefaultTableModel)table1.getModel();
+        int selectedrow =  table1.getSelectedRow();
+
+        shutdownip.setText(model.getValueAt(selectedrow,0).toString());
+    }
 
 
-   UIForm(){
+
+    UIForm(){
         Shutdown power = new Shutdown();
         MailAlert mailAlert = new MailAlert();
         this.setTitle("IP Scanner");
@@ -139,6 +167,13 @@ public class UIForm extends JFrame{
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setContentPane(panel);
         this.pack();
+
+
+        table1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                mouseclicked(evt);
+            }
+        });
 
         try (final DatagramSocket socket = new DatagramSocket()) {
             socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
