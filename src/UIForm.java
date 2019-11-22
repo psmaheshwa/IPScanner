@@ -21,6 +21,10 @@ public class UIForm extends JFrame{
     private JTable table1;
     private JButton shutdownButton;
     private JTextField shutdownip;
+    private JLabel deviceiplabel;
+    private JLabel enteriplabel;
+    private JLabel iprangelable;
+    private JLabel tolabel;
     private boolean notifyloop = false;
     private boolean scanloop = false;
     private Thread runner = null;
