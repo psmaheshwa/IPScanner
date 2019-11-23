@@ -8,15 +8,8 @@ public class WakeUpOnLan {
 
         public static void main(String[] args) {
 
-//            if (args.length != 2) {
-//                System.out.println("Usage: java WakeOnLan <broadcast-ip> <mac-address>");
-//                System.out.println("Example: java WakeOnLan 192.168.0.255 00:0D:61:08:22:4A");
-//                System.out.println("Example: java WakeOnLan 192.168.0.255 00-0D-61-08-22-4A");
-//                System.exit(1);
-//            }
-        //Todo
-            String ipStr = "10.10.239.255";
-            String macStr = "74:86:7A:60:74:DE";
+            String ipStr = "10.10.41.68";
+            String macStr = "54:BE:F7:40:E9:AE";
 
             try {
                 byte[] macBytes = getMacBytes(macStr);
@@ -33,6 +26,7 @@ public class WakeUpOnLan {
                 DatagramSocket socket = new DatagramSocket();
                 socket.send(packet);
                 socket.close();
+                System.out.println(bytes+" "+bytes.length+" "+address+" ");
 
                 System.out.println("Wake-on-LAN packet sent.");
             }
