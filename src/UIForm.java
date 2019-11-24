@@ -1,9 +1,5 @@
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.*;
 import java.util.regex.Matcher;
@@ -58,7 +54,6 @@ public class UIForm extends JFrame{
     }
 
     private void scanner(){
-        System.out.println("Search log:");
         table1.setModel(model);
         model.addColumn("IP Address");
         model.addColumn("MAC");
@@ -70,8 +65,6 @@ public class UIForm extends JFrame{
 
         String startingip = fromTextField.getText();
         String endingip = toTextField.getText();
-        System.out.println(startingip+""+endingip);
-
         String[] nt = startingip.split("\\.");
         String[] br= endingip.split("\\.");
 
@@ -85,8 +78,6 @@ public class UIForm extends JFrame{
 
                                     if (addr.isReachable(150)) {
                                             if (addr.getHostAddress().equals(String.format("%s.%s.%s.%s", j, k, l, i))){
-
-
                                                 try{
                                                     NetworkInterface network = NetworkInterface.getByInetAddress(addr);
                                                     byte[] macArray = network.getHardwareAddress();  //get Harware address Array
@@ -97,8 +88,6 @@ public class UIForm extends JFrame{
                                                     }
                                                     String macAddress=str.toString();
                                                     model.addRow(new Object[]{addr.getHostAddress(), macAddress, "UP"});
-
-                                                    System.out.println(macAddress);
                                                 }
                                                 catch(Exception E) {
                                                     E.printStackTrace();
@@ -110,14 +99,12 @@ public class UIForm extends JFrame{
 
 
                                         ++count;
-                                        System.out.println("Active : " + addr.getHostAddress());
                                         ++connected;
                                     } else {
                                         model.addRow(new Object[]{ addr.getHostAddress(), "n\\a", "Down"});
                                         ++count;
-                                        System.out.println("Inactive : " + addr.getHostAddress());
                                     }
-                                } catch (IOException ioex) {
+                                } catch (IOException ignored) {
                                 }
                         }
                     }
@@ -149,7 +136,7 @@ public class UIForm extends JFrame{
         runner = null;
     }
 
-    private void mouseclicked(java.awt.event.MouseEvent mouseEventt){
+    private void mouseclicked(){
         DefaultTableModel model = (DefaultTableModel)table1.getModel();
         int selectedrow =  table1.getSelectedRow();
 
@@ -171,7 +158,7 @@ public class UIForm extends JFrame{
 
         table1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                mouseclicked(evt);
+                mouseclicked();
             }
         });
 
@@ -179,117 +166,104 @@ public class UIForm extends JFrame{
             socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
             InetAddress machine = socket.getLocalAddress();
             NetworkInterface networkInterface = NetworkInterface.getByInetAddress(machine);
+
+
             String myip = machine.getHostAddress();
-            if (myip.equals("127.0.0.1")) {
-                System.out.println("This PC is not connected to any network!");
-            } else {
-                int n = networkInterface.getInterfaceAddresses().get(networkInterface.getInterfaceAddresses().size() - 1).getNetworkPrefixLength();
-                System.out.println("My Device IP: " + myip + "\n");
-                int[][] ips = Scanner_ip.ipcalculator(myip, n);
-                int[] nt = ips[0];
-                int[] br = ips[1];
-                deviceip.setText(myip);
-                toTextField.setText(br[0]+"."+br[1]+"."+br[2]+"."+br[3]);
-                fromTextField.setText(nt[0]+"."+nt[1]+"."+nt[2]+"."+nt[3]);
-                fromTextField.setEditable(true);
-                toTextField.setEditable(true);
+            int n = networkInterface.getInterfaceAddresses().get(networkInterface.getInterfaceAddresses().size() - 1).getNetworkPrefixLength();
 
-                startButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        if(!scanloop){
-                            scanloop = true;
-                            startButton.setText("Stop");
-                            start();
-                        }else {
-                            scanloop = false;
-                            startButton.setText("Restart");
-                            model = new DefaultTableModel() {
-                                public boolean isCellEditable(int rowIndex, int mColIndex) {
-                                    return false;
-                                }
-                            };
-                            stop();
-                        }
-                    }
-                });
+            int[][] ips = Scanner_ip.ipcalculator(myip, n);
+            int[] nt = ips[0];
+            int[] br = ips[1];
+            deviceip.setText(myip);
+            toTextField.setText(br[0]+"."+br[1]+"."+br[2]+"."+br[3]);
+            fromTextField.setText(nt[0]+"."+nt[1]+"."+nt[2]+"."+nt[3]);
+            fromTextField.setEditable(true);
+            toTextField.setEditable(true);
 
-                notify.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    String wntip = getnoteip.getText();
-                    if(validate(wntip)) {
-                        JFrame notifier = new JFrame("email Credentials");
-                        recipent = JOptionPane.showInputDialog(frame, "Enter Recipient email!");
-                        email = JOptionPane.showInputDialog(frame, "Enter your email ");
-                        password = JOptionPane.showInputDialog(frame, "Enter your password!");
-                        if (validateEmail(email) && validateEmail(recipent)){
-                            if(!notifyloop){
-                                notify.setText("Stop");
-                                notifyloop = true;
-                            }else{
-                                notifyloop = false;
-                                notify.setText("Notify");
-                                JOptionPane.showMessageDialog(frame, wntip + " disconnected!",
-                                        "Notifier",
-                                        JOptionPane.WARNING_MESSAGE);
+            startButton.addActionListener(actionEvent -> {
+                if(!scanloop){
+                    scanloop = true;
+                    startButton.setText("Stop");
+                    start();
+                }else {
+                    scanloop = false;
+                    startButton.setText("Restart");
+                    model = new DefaultTableModel() {
+                            public boolean isCellEditable(int rowIndex, int mColIndex) { return false;
                             }
+                        };
+                    stop();
+                }
+            });
+
+            notify.addActionListener(actionEvent -> {
+                String wntip = getnoteip.getText();
+                if(validate(wntip)) {
+                    recipent = JOptionPane.showInputDialog(frame, "Enter Recipient email!");
+                    email = JOptionPane.showInputDialog(frame, "Enter your email ");
+                    password = JOptionPane.showInputDialog(frame, "Enter your password!");
+                    if (validateEmail(email) && validateEmail(recipent)){
+                        if(!notifyloop){
+                            notify.setText("Stop");
+                            notifyloop = true;
                         }else{
-                            JOptionPane.showMessageDialog(frame,"invalid email!",
+                            notifyloop = false;
+                            notify.setText("Notify");
+                            JOptionPane.showMessageDialog(frame, wntip + " disconnected!",
                                     "Notifier",
                                     JOptionPane.WARNING_MESSAGE);
                         }
-                        try {
-                            InetAddress addr = InetAddress.getByName(wntip);
-                            new SwingWorker(){
+                    }else{
+                        JOptionPane.showMessageDialog(frame,"invalid email!",
+                                "Notifier",
+                                JOptionPane.WARNING_MESSAGE);
+                    }
+                    try {
+                        InetAddress addr = InetAddress.getByName(wntip);
+                        new SwingWorker(){
 
-                                @Override
-                                protected Object doInBackground() throws Exception {
-                                    while (notifyloop) {
-                                        if (addr.isReachable(500)) {
-                                        } else{
-                                            if(!(email == null || password == null || recipent == null)){
-                                                mailAlert.sendMail(wntip,email,password,recipent);
-                                                notify.setText("Notify");
-                                                break;
-                                            }
+                            @Override
+                            protected Object doInBackground() throws Exception {
+                                while (notifyloop) {
+                                    if (addr.isReachable(500)) {
+                                    } else{
+                                        if(!(email == null || password == null || recipent == null)){
+                                            mailAlert.sendMail(wntip,email,password,recipent);
+                                            notify.setText("Notify");
+                                            break;
                                         }
                                     }
-                                    return null;
                                 }
-                            }.execute();
-                        } catch (IOException ignored) {
-                        }
-                    }else
-                        JOptionPane.showMessageDialog(frame, wntip + " not a valid IP!",
-                                "Wrong input",
-                                JOptionPane.ERROR_MESSAGE);
-                }
-
-            });
-                shutdownButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        String shutip = shutdownip.getText();
-                        if(validate(shutip)){
-                            new SwingWorker(){
-
-                                @Override
-                                protected Object doInBackground() throws Exception {
-                                    power.down(shutip);
-                                    JOptionPane.showMessageDialog(frame, shutip + " Machine Successfully shutdown!",
-                                            "Power Off",
-                                            JOptionPane.INFORMATION_MESSAGE);
-                                    return null;
-                                }
-
-                            }.execute();
-                        }else  JOptionPane.showMessageDialog(frame, shutip + " not a valid IP!",
-                                "Wrong input",
-                                JOptionPane.ERROR_MESSAGE);
+                                return null;
+                            }
+                        }.execute();
+                    } catch (IOException ignored) {
                     }
-                });
-            }
+                }else
+                    JOptionPane.showMessageDialog(frame, wntip + " not a valid IP!",
+                            "Wrong input",
+                            JOptionPane.ERROR_MESSAGE);
+            });
+
+            shutdownButton.addActionListener(actionEvent -> {
+                String shutip = shutdownip.getText();
+                if(validate(shutip)){
+                    new SwingWorker(){
+
+                        @Override
+                        protected Object doInBackground() {
+                            power.down(shutip);
+                            JOptionPane.showMessageDialog(frame, shutip + " Machine Successfully shutdown!",
+                                    "Power Off",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                            return null;
+                        }
+
+                    }.execute();
+                }else  JOptionPane.showMessageDialog(frame, shutip + " not a valid IP!",
+                        "Wrong input",
+                        JOptionPane.ERROR_MESSAGE);
+            });
         }
         catch (SocketException | UnknownHostException e) {
             e.printStackTrace();

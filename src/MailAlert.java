@@ -20,7 +20,7 @@ public class MailAlert {
         };
         Session session = Session.getInstance(props, auth);
 
-        EmailUtil.sendEmail(session, toEmail,"IP Notifier", ip+" disconnected!");
+        EmailUtil.sendEmail(session, toEmail, ip+" disconnected!");
 
     }
 

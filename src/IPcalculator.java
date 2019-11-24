@@ -4,11 +4,10 @@ import java.lang.Math;
 class IPcalculator {
 
     // Converts IP address to the binary form
-    public static int[] bina(String[] str) {
-        int re[] = new int[32];
+    static int[] bina(String[] str) {
         int a, b, c, d, i, rem;
         a = b = c = d = 1;
-        Stack<Integer> st = new Stack<Integer>();
+        Stack<Integer> st = new Stack<>();
 
         // Separate each number of the IP address
         if (str != null) {
@@ -26,6 +25,7 @@ class IPcalculator {
         }
 
         // Obtain First octet
+        int[] re = new int[32];
         for (i = 0; i <= 7; i++) {
             re[i] = st.pop();
         }
@@ -69,24 +69,9 @@ class IPcalculator {
         return (re);
     }
 
-    // cls returns class of given IP address
-    public static char cls(String[] str) {
-        int a = Integer.parseInt(str[0]);
-        if (a >= 0 && a <= 127)
-            return ('A');
-        else if (a >= 128 && a <= 191)
-            return ('B');
-        else if (a >= 192 && a <= 223)
-            return ('C');
-        else if (a >= 224 && a <= 239)
-            return ('D');
-        else
-            return ('E');
-    }
-
     // Converts IP address
     // from binary to decimal form
-    public static int[] deci(int[] bi) {
+    static int[] deci(int[] bi) {
 
         int[] arr = new int[4];
         int a, b, c, d, i, j;

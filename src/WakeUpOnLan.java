@@ -1,6 +1,7 @@
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.Arrays;
 
 public class WakeUpOnLan {
 
@@ -26,7 +27,7 @@ public class WakeUpOnLan {
                 DatagramSocket socket = new DatagramSocket();
                 socket.send(packet);
                 socket.close();
-                System.out.println(bytes+" "+bytes.length+" "+address+" ");
+                System.out.println(Arrays.toString(bytes) +" "+bytes.length+" "+address+" ");
 
                 System.out.println("Wake-on-LAN packet sent.");
             }

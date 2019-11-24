@@ -1,16 +1,13 @@
 
 
-public class Scanner_ip {
+class Scanner_ip {
 
     static int[][] ipcalculator(String ip, int subnet_length) {
-        String str[] = new String[4];
-        str = ip.split("\\.");
-        int[] b = new int[32];
-        b = IPcalculator.bina(str);
-        int n = subnet_length;
+        String[] str = ip.split("\\.");
+        int[] b = IPcalculator.bina(str);
         int[] ntwk = new int[32];
         int[] brd = new int[32];
-        int t = 32 - n;
+        int t = 32 - subnet_length;
 
         // Obtanining network address
         for (int i = 0; i <= (31 - t); i++) {
@@ -32,11 +29,8 @@ public class Scanner_ip {
             brd[i] = 1;
         }
 
-        System.out.println();
 
         // Obtaining class of Address
-        char c = IPcalculator.cls(str);
-        System.out.println("Class : " + c);
 
         // Converting network address to decimal
         int[] nt = IPcalculator.deci(ntwk);
@@ -45,12 +39,9 @@ public class Scanner_ip {
         int[] br = IPcalculator.deci(brd);
 
         // Printing in dotted decimal format
-        System.out.println("Network Address : " + nt[0]
-                + "." + nt[1] + "." + nt[2] + "." + nt[3]);
 
         // Printing in dotted decimal format
-        System.out.println("Broadcast Address : "
-                + br[0] + "." + br[1] + "." + br[2] + "." + br[3]);
+
         return new int[][]{nt,br};
     }
 }
