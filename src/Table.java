@@ -58,7 +58,7 @@ public class Table{
 
         scanButton.addActionListener(actionEvent -> {
             frame.setVisible(false);
-            new UIForm();
+            new UIForm("");
         });
     }
 

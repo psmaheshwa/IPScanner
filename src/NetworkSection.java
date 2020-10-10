@@ -15,6 +15,7 @@ public class NetworkSection {
     private JButton shutdownButton;
     private JButton wakeUpButton;
     private JLabel networkName;
+    private JButton updateButton;
     private DefaultTableModel model = new DefaultTableModel() {
         public boolean isCellEditable(int rowIndex, int mColIndex) {
             return false;
@@ -32,9 +33,9 @@ public class NetworkSection {
         frame.setContentPane(panel);
         frame.setResizable(false);
         frame.pack();
-        table.addMouseListener(new java.awt.event.MouseAdapter() { public void mouseClicked(java.awt.event.MouseEvent evt) {
-                mouseclicked();
-            }});
+//        table.addMouseListener(new java.awt.event.MouseAdapter() { public void mouseClicked(java.awt.event.MouseEvent evt) {
+//                mouseclicked();
+//            }});
 
         try {
             Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/IPSCANNER?useSSL=false","mahesh","P@ssw0rd");
@@ -47,11 +48,17 @@ public class NetworkSection {
             while (resultSet.next()) {
                 String ip = resultSet.getString("ip");
                 String Mac = resultSet.getString("Mac");
-                InetAddress addr = InetAddress.getByName(ip);
-                String status = addr.isReachable(150) ? "On" : "Off";
-                model.addRow(new Object[]{ip,Mac,status});
-                ipList.add(ip);
-                MacList.add(Mac);
+                new SwingWorker<>() {
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        InetAddress addr = InetAddress.getByName(ip);
+                        String status = addr.isReachable(150) ? "On" : "Off";
+                        model.addRow(new Object[]{ip,Mac,status});
+                        ipList.add(ip);
+                        MacList.add(Mac);
+                        return null;
+                    }
+                }.execute();
             }
         } catch (Exception e) {
             System.out.println("error while validating"+e);
@@ -82,11 +89,16 @@ public class NetworkSection {
             }.execute();
         }
     });
+
+        updateButton.addActionListener(actionEvent -> {
+            frame.setVisible(false);
+            new UIForm(name);
+        });
 }
-    private void mouseclicked(){
-        DefaultTableModel model = (DefaultTableModel)table.getModel();
-        int selectedrow =  table.getSelectedRow();
-        String ipAddress = model.getValueAt(selectedrow,0).toString();
-    }
+//    private void mouseclicked(){
+//        DefaultTableModel model = (DefaultTableModel)table.getModel();
+//        int selectedrow =  table.getSelectedRow();
+//        String ipAddress = model.getValueAt(selectedrow,0).toString();
+//    }
 
 }

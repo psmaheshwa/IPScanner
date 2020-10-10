@@ -2,8 +2,13 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
 import java.net.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 public class UIForm extends JFrame{
     private JFrame frame;
@@ -29,7 +34,7 @@ public class UIForm extends JFrame{
     private String recipent;
     private String email;
     private String password;
-
+    String tableName;
 
     private DefaultTableModel model = new DefaultTableModel() {
         public boolean isCellEditable(int rowIndex, int mColIndex) {
@@ -63,6 +68,16 @@ public class UIForm extends JFrame{
         table1.setShowVerticalLines(false);
 
 
+        try {
+            Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/IPSCANNER?useSSL=false","mahesh","P@ssw0rd");
+            System.out.println(tableName);
+            PreparedStatement preparedStatement = dbConnection.prepareStatement("DELETE FROM " + tableName);
+            preparedStatement.executeUpdate();
+            dbConnection.close();
+        } catch (Exception e) {
+            System.out.println("error while validating"+e);
+        }
+
         String startingip = fromTextField.getText();
         String endingip = toTextField.getText();
         String[] nt = startingip.split("\\.");
@@ -75,7 +90,9 @@ public class UIForm extends JFrame{
                     for (int i = Integer.parseInt((nt[3])); i <= Integer.parseInt(br[3]); ++i) {
                             try {
                                 InetAddress addr = InetAddress.getByName(String.format("%s.%s.%s.%s", j, k, l, i));
-
+                                Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/IPSCANNER?useSSL=false","mahesh","P@ssw0rd");
+                                String query = "insert into "+ tableName+ " (ip, Mac)" + " values (?, ?)";
+                                PreparedStatement preparedStatement = dbConnection.prepareStatement(query);
                                 if (addr.isReachable(150)) {
                                         if (addr.getHostAddress().equals(String.format("%s.%s.%s.%s", j, k, l, i))){
                                             try{
@@ -86,24 +103,36 @@ public class UIForm extends JFrame{
                                                     str.append(String.format("%02X%s", macArray[index], (index < macArray.length - 1) ? "-" : ""));
                                                 }
                                                 String macAddress=str.toString();
+                                                preparedStatement.setString(1,addr.getHostAddress());
+                                                preparedStatement.setString(2,macAddress);
+                                                preparedStatement.executeUpdate();
                                                 model.addRow(new Object[]{addr.getHostAddress(), macAddress, "UP"});
                                             }
                                             catch(Exception E) {
                                                 E.printStackTrace();
+                                                preparedStatement.setString(1,addr.getHostAddress());
+                                                preparedStatement.setString(2,"n\\a");
+                                                preparedStatement.executeUpdate();
                                                 model.addRow(new Object[]{addr.getHostAddress(), "n\\a", "UP"});
                                             }
 
-                                        }else
+                                        }else {
+                                            preparedStatement.setString(1,addr.getHostAddress());
+                                            preparedStatement.setString(2,"n\\a");
+                                            preparedStatement.executeUpdate();
                                             model.addRow(new Object[]{addr.getHostAddress(), "n\\a", addr.getHostName()});
-
-
+                                        }
                                     ++count;
                                     ++connected;
                                 } else {
+                                    preparedStatement.setString(1,addr.getHostAddress());
+                                    preparedStatement.setString(2,"n\\a");
+                                    preparedStatement.executeUpdate();
                                     model.addRow(new Object[]{ addr.getHostAddress(), "n\\a", "Down"});
                                     ++count;
                                 }
-                            } catch (IOException ignored) {
+                                dbConnection.close();
+                            } catch (IOException | SQLException ignored) {
                             }
                     }
                 }
@@ -145,7 +174,8 @@ public class UIForm extends JFrame{
 
 
 
-    UIForm(){
+
+    UIForm(String name){
         Shutdown power = new Shutdown();
         MailAlert mailAlert = new MailAlert();
         this.setTitle("IP Scanner");
@@ -154,7 +184,7 @@ public class UIForm extends JFrame{
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setContentPane(panel);
         this.pack();
-
+        tableName = new String(name);
 
         table1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -166,11 +196,8 @@ public class UIForm extends JFrame{
             socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
             InetAddress machine = socket.getLocalAddress();
             NetworkInterface networkInterface = NetworkInterface.getByInetAddress(machine);
-
-
             String myip = machine.getHostAddress();
             int n = networkInterface.getInterfaceAddresses().get(networkInterface.getInterfaceAddresses().size() - 1).getNetworkPrefixLength();
-
             int[][] ips = Scanner_ip.ipcalculator(myip, n);
             int[] nt = ips[0];
             int[] br = ips[1];
