@@ -1,7 +1,5 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,8 +11,8 @@ public class Table{
     private JTable table;
     private JScrollPane scrollPane;
     private JButton deleteButton;
-    private JButton updateButton;
     private JButton scanButton;
+    private JTextField location;
     private DefaultTableModel model = new DefaultTableModel() {
         public boolean isCellEditable(int rowIndex, int mColIndex) {
             return false;
@@ -37,24 +35,28 @@ public class Table{
             }
         });
 
-
-
-            try {
-                Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/IPSCANNER?useSSL=false","mahesh","P@ssw0rd");
-                PreparedStatement preparedStatement = dbConnection.prepareStatement("show tables");
-                ResultSet resultSet = preparedStatement.executeQuery();
-                table.setModel(model);
-                model.addColumn("Location");
-                while (resultSet.next()) {
-                    model.addRow(new Object[]{resultSet.getString("Tables_in_IPSCANNER")});
-                }
-            } catch (Exception e) {
-                System.out.println("error while validating"+e);
+        try {
+            Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/IPSCANNER?useSSL=false","mahesh","P@ssw0rd");
+            PreparedStatement preparedStatement = dbConnection.prepareStatement("show tables");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            table.setModel(model);
+            model.addColumn("Location");
+            while (resultSet.next()) {
+                String temp = resultSet.getString("Tables_in_IPSCANNER");
+                if(!temp.equals("user"))
+                    model.addRow(new Object[]{temp});
             }
-
+        } catch (Exception e) {
+            System.out.println("error while validating"+e);
+        }
 
 
         button1.addActionListener(actionEvent -> {
+            frame.setVisible(false);
+            new NetworkSection(tableName);
+        });
+
+        scanButton.addActionListener(actionEvent -> {
             frame.setVisible(false);
             new UIForm();
         });
@@ -64,6 +66,6 @@ public class Table{
         DefaultTableModel model = (DefaultTableModel)table.getModel();
         int selectedrow =  table.getSelectedRow();
         tableName = model.getValueAt(selectedrow,0).toString();
+        location.setText(tableName);
     }
-
 }
