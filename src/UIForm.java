@@ -69,56 +69,56 @@ public class UIForm extends JFrame{
         String[] br= endingip.split("\\.");
 
         if(validate(startingip) && validate(endingip)){
-            for (int j = Integer.parseInt(nt[0]); j <= Integer.parseInt(br[0]); ++j) {
-                for (int k = Integer.parseInt(nt[1]); k <= Integer.parseInt(br[1]); ++k) {
-                    for (int l = Integer.parseInt(nt[2]); l <= Integer.parseInt(br[2]); ++l) {
-                        for (int i = Integer.parseInt((nt[3])); i <= Integer.parseInt(br[3]); ++i) {
-                                try {
-                                    InetAddress addr = InetAddress.getByName(String.format("%s.%s.%s.%s", j, k, l, i));
+        for (int j = Integer.parseInt(nt[0]); j <= Integer.parseInt(br[0]); ++j) {
+            for (int k = Integer.parseInt(nt[1]); k <= Integer.parseInt(br[1]); ++k) {
+                for (int l = Integer.parseInt(nt[2]); l <= Integer.parseInt(br[2]); ++l) {
+                    for (int i = Integer.parseInt((nt[3])); i <= Integer.parseInt(br[3]); ++i) {
+                            try {
+                                InetAddress addr = InetAddress.getByName(String.format("%s.%s.%s.%s", j, k, l, i));
 
-                                    if (addr.isReachable(150)) {
-                                            if (addr.getHostAddress().equals(String.format("%s.%s.%s.%s", j, k, l, i))){
-                                                try{
-                                                    NetworkInterface network = NetworkInterface.getByInetAddress(addr);
-                                                    byte[] macArray = network.getHardwareAddress();  //get Harware address Array
-                                                    StringBuilder str = new StringBuilder();
-
-                                                    for (int index = 0; index < macArray.length; index++) {
-                                                        str.append(String.format("%02X%s", macArray[index], (index < macArray.length - 1) ? "-" : ""));
-                                                    }
-                                                    String macAddress=str.toString();
-                                                    model.addRow(new Object[]{addr.getHostAddress(), macAddress, "UP"});
+                                if (addr.isReachable(150)) {
+                                        if (addr.getHostAddress().equals(String.format("%s.%s.%s.%s", j, k, l, i))){
+                                            try{
+                                                NetworkInterface network = NetworkInterface.getByInetAddress(addr);
+                                                byte[] macArray = network.getHardwareAddress();
+                                                StringBuilder str = new StringBuilder();
+                                                for (int index = 0; index < macArray.length; index++) {
+                                                    str.append(String.format("%02X%s", macArray[index], (index < macArray.length - 1) ? "-" : ""));
                                                 }
-                                                catch(Exception E) {
-                                                    E.printStackTrace();
-                                                    model.addRow(new Object[]{addr.getHostAddress(), "n\\a", "UP"});
-                                                }
+                                                String macAddress=str.toString();
+                                                model.addRow(new Object[]{addr.getHostAddress(), macAddress, "UP"});
+                                            }
+                                            catch(Exception E) {
+                                                E.printStackTrace();
+                                                model.addRow(new Object[]{addr.getHostAddress(), "n\\a", "UP"});
+                                            }
 
-                                            }else
-                                                model.addRow(new Object[]{addr.getHostAddress(), "n\\a", addr.getHostName()});
+                                        }else
+                                            model.addRow(new Object[]{addr.getHostAddress(), "n\\a", addr.getHostName()});
 
 
-                                        ++count;
-                                        ++connected;
-                                    } else {
-                                        model.addRow(new Object[]{ addr.getHostAddress(), "n\\a", "Down"});
-                                        ++count;
-                                    }
-                                } catch (IOException ignored) {
+                                    ++count;
+                                    ++connected;
+                                } else {
+                                    model.addRow(new Object[]{ addr.getHostAddress(), "n\\a", "Down"});
+                                    ++count;
                                 }
-                        }
+                            } catch (IOException ignored) {
+                            }
                     }
                 }
             }
-            JOptionPane.showMessageDialog(frame, "No.of.Device Scanned : "+count+"\nNo.of.Device Connected : "+connected,
-                    "Result",
-                    JOptionPane.INFORMATION_MESSAGE);
-        }else{
-            JOptionPane.showMessageDialog(frame," not a valid IP!",
-                    "Wrong input",
-                    JOptionPane.ERROR_MESSAGE);
         }
+        JOptionPane.showMessageDialog(frame, "No.of.Device Scanned : "+count+"\nNo.of.Device Connected : "+connected,
+                "Result",
+                JOptionPane.INFORMATION_MESSAGE);
+    }else{
+        JOptionPane.showMessageDialog(frame," not a valid IP!",
+                "Wrong input",
+                JOptionPane.ERROR_MESSAGE);
     }
+    }
+
     private void start() {
         if (runner == null)
         {

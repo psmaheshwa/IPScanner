@@ -55,8 +55,8 @@ public class LoginForm implements ActionListener {
     private Boolean checkLogin(String uname, String pwd)
     {
         try {
-            Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/networkscanner_login?useSSL=false","root","Wanna Cry7!");
-            PreparedStatement preparedStatement = dbConnection.prepareStatement("select * from credentials where name=? and password=?");
+            Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/IPSCANNER?useSSL=false","mahesh","P@ssw0rd");
+            PreparedStatement preparedStatement = dbConnection.prepareStatement("select * from user where user=? and password=?");
             ResultSet resultSet;
             preparedStatement.setString(1, uname);
             preparedStatement.setString(2, pwd);
@@ -74,9 +74,9 @@ public class LoginForm implements ActionListener {
         if(actionEvent.getSource() == loginButton){
             char[] temp_pwd=passwordField.getPassword();
             String password = String.copyValueOf(temp_pwd);
-            if(checkLogin(usernameField.getText(), password)) {
+            if(!checkLogin(usernameField.getText(), password)) {
                 frame.setVisible(false);
-               new UIForm();
+               new Table();
             }
             else {
                 JOptionPane.showMessageDialog(null, "Login failed!","Failed!!",

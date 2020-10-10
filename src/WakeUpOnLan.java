@@ -9,8 +9,11 @@ public class WakeUpOnLan {
 
         public static void main(String[] args) {
 
-            String ipStr = "10.10.41.68";
-            String macStr = "54:BE:F7:40:E9:AE";
+            String ipStr = "10.10.41.3";
+            String macStr = "8C-EC-4B-56-75-CB";
+
+
+            //8C-EC-4B-56-22-BB
 
             try {
                 byte[] macBytes = getMacBytes(macStr);
@@ -54,6 +57,4 @@ public class WakeUpOnLan {
             }
             return bytes;
         }
-
-
     }
