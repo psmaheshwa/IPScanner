@@ -7,16 +7,14 @@ public class WakeUpOnLan {
 
         private static final int PORT = 9;
 
-        public static void main(String[] args) {
+        WakeUpOnLan(){}
 
-            String ipStr = "10.10.41.3";
-            String macStr = "8C-EC-4B-56-75-CB";
+        public static void shutdown(String ip, String Mac) {
 
-
-            //8C-EC-4B-56-22-BB
+            System.out.println(ip+" "+Mac);
 
             try {
-                byte[] macBytes = getMacBytes(macStr);
+                byte[] macBytes = getMacBytes(Mac);
                 byte[] bytes = new byte[6 + 16 * macBytes.length];
                 for (int i = 0; i < 6; i++) {
                     bytes[i] = (byte) 0xff;
@@ -25,7 +23,7 @@ public class WakeUpOnLan {
                     System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
                 }
 
-                InetAddress address = InetAddress.getByName(ipStr);
+                InetAddress address = InetAddress.getByName(ip);
                 DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, PORT);
                 DatagramSocket socket = new DatagramSocket();
                 socket.send(packet);

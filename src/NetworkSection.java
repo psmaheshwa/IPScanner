@@ -33,9 +33,6 @@ public class NetworkSection {
         frame.setContentPane(panel);
         frame.setResizable(false);
         frame.pack();
-//        table.addMouseListener(new java.awt.event.MouseAdapter() { public void mouseClicked(java.awt.event.MouseEvent evt) {
-//                mouseclicked();
-//            }});
 
         try {
             Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/IPSCANNER?useSSL=false","mahesh","P@ssw0rd");
@@ -94,11 +91,21 @@ public class NetworkSection {
             frame.setVisible(false);
             new UIForm(name);
         });
-}
-//    private void mouseclicked(){
-//        DefaultTableModel model = (DefaultTableModel)table.getModel();
-//        int selectedrow =  table.getSelectedRow();
-//        String ipAddress = model.getValueAt(selectedrow,0).toString();
-//    }
 
+        wakeUpButton.addActionListener(actionEvent -> {
+            WakeUpOnLan wakeUpOnLan = new WakeUpOnLan();
+            for( int i = 0; i < MacList.size(); i++) {
+                if(!MacList.get(i).equals("n\\a")){
+                    int finalI = i;
+                    new SwingWorker<>() {
+                        @Override
+                        protected Object doInBackground() throws Exception {
+                            WakeUpOnLan.shutdown(ipList.get(finalI),MacList.get(finalI));
+                            return null;
+                        }
+                    }.execute();
+                }
+            }
+        });
+    }
 }
