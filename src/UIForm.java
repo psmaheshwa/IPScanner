@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,9 +19,7 @@ public class UIForm extends JFrame{
     private JButton startButton;
     private JLabel deviceip;
     private JTextField getnoteip;
-    private JButton notify;
     private JTable table1;
-    private JButton shutdownButton;
     private JTextField shutdownip;
     private JLabel deviceiplabel;
     private JLabel enteriplabel;
@@ -42,7 +41,6 @@ public class UIForm extends JFrame{
         }
     };
 
-
     private static final Pattern PATTERN = Pattern.compile(
             "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
 
@@ -50,8 +48,7 @@ public class UIForm extends JFrame{
         return PATTERN.matcher(ip).matches();
     }
 
-    private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
-                   Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     private static boolean validateEmail(String emailStr) {
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
@@ -67,16 +64,26 @@ public class UIForm extends JFrame{
         table1.setShowHorizontalLines(false);
         table1.setShowVerticalLines(false);
 
-
-        try {
-            Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/IPSCANNER?useSSL=false","mahesh","P@ssw0rd");
-            System.out.println(tableName);
-            PreparedStatement preparedStatement = dbConnection.prepareStatement("DELETE FROM " + tableName);
-            preparedStatement.executeUpdate();
+        try{
+        Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/IPSCANNER?useSSL=false","mahesh","P@ssw0rd");
+            if(!tableName.equals("")){
+                getnoteip.setText(tableName);
+                PreparedStatement preparedStatement = dbConnection.prepareStatement("DELETE FROM " + tableName);
+                preparedStatement.executeUpdate();
+            }else{
+            tableName = getnoteip.getText();
+                if(tableName.equals("")){
+                    JOptionPane.showMessageDialog(frame, "Enter Network Name!", "Info", JOptionPane.INFORMATION_MESSAGE);
+                }else {
+                    PreparedStatement preparedStatement = dbConnection.prepareStatement("CREATE TABLE " + tableName + " (ip varchar(20), Mac varchar(20) )");
+                    preparedStatement.executeUpdate();
+                }
+            }
             dbConnection.close();
         } catch (Exception e) {
             System.out.println("error while validating"+e);
         }
+
 
         String startingip = fromTextField.getText();
         String endingip = toTextField.getText();
@@ -91,7 +98,7 @@ public class UIForm extends JFrame{
                             try {
                                 InetAddress addr = InetAddress.getByName(String.format("%s.%s.%s.%s", j, k, l, i));
                                 Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/IPSCANNER?useSSL=false","mahesh","P@ssw0rd");
-                                String query = "insert into "+ tableName+ " (ip, Mac)" + " values (?, ?)";
+                                String query = MessageFormat.format("insert into {0} (ip, Mac) values (?, ?)", tableName);
                                 PreparedStatement preparedStatement = dbConnection.prepareStatement(query);
                                 if (addr.isReachable(150)) {
                                         if (addr.getHostAddress().equals(String.format("%s.%s.%s.%s", j, k, l, i))){
@@ -221,75 +228,6 @@ public class UIForm extends JFrame{
                         };
                     stop();
                 }
-            });
-
-            notify.addActionListener(actionEvent -> {
-                String wntip = getnoteip.getText();
-                if(validate(wntip)) {
-                    recipent = JOptionPane.showInputDialog(frame, "Enter Recipient email!");
-                    email = JOptionPane.showInputDialog(frame, "Enter your email ");
-                    password = JOptionPane.showInputDialog(frame, "Enter your password!");
-                    if (validateEmail(email) && validateEmail(recipent)){
-                        if(!notifyloop){
-                            notify.setText("Stop");
-                            notifyloop = true;
-                        }else{
-                            notifyloop = false;
-                            notify.setText("Notify");
-                            JOptionPane.showMessageDialog(frame, wntip + " disconnected!",
-                                    "Notifier",
-                                    JOptionPane.WARNING_MESSAGE);
-                        }
-                    }else{
-                        JOptionPane.showMessageDialog(frame,"invalid email!",
-                                "Notifier",
-                                JOptionPane.WARNING_MESSAGE);
-                    }
-                    try {
-                        InetAddress addr = InetAddress.getByName(wntip);
-                        new SwingWorker(){
-
-                            @Override
-                            protected Object doInBackground() throws Exception {
-                                while (notifyloop) {
-                                    if (addr.isReachable(500)) {
-                                    } else{
-                                        if(!(email == null || password == null || recipent == null)){
-                                            mailAlert.sendMail(wntip,email,password,recipent);
-                                            notify.setText("Notify");
-                                            break;
-                                        }
-                                    }
-                                }
-                                return null;
-                            }
-                        }.execute();
-                    } catch (IOException ignored) {
-                    }
-                }else
-                    JOptionPane.showMessageDialog(frame, wntip + " not a valid IP!",
-                            "Wrong input",
-                            JOptionPane.ERROR_MESSAGE);
-            });
-
-            shutdownButton.addActionListener(actionEvent -> {
-                String shutip = shutdownip.getText();
-                if(validate(shutip)){
-                    new SwingWorker(){
-
-                        @Override
-                        protected Object doInBackground() {
-                            power.down(shutip);
-                            JOptionPane.showMessageDialog(frame, shutip + " Machine Successfully shutdown!",
-                                    "Power Off",
-                                    JOptionPane.INFORMATION_MESSAGE);
-                            return null;
-                        }
-
-                    }.execute();
-                }else  JOptionPane.showMessageDialog(frame, shutip + " not a valid IP!",
-                        "Wrong input",
-                        JOptionPane.ERROR_MESSAGE);
             });
         }
         catch (SocketException | UnknownHostException e) {
