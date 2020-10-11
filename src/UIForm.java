@@ -191,7 +191,7 @@ public class UIForm extends JFrame{
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setContentPane(panel);
         this.pack();
-        tableName = new String(name);
+        tableName = name;
 
         table1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
