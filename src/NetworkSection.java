@@ -14,7 +14,6 @@ public class NetworkSection {
     private JTable table;
     private JButton shutdownButton;
     private JButton wakeUpButton;
-    private JLabel networkName;
     private JButton updateButton;
     private DefaultTableModel model = new DefaultTableModel() {
         public boolean isCellEditable(int rowIndex, int mColIndex) {
