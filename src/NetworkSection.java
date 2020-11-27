@@ -34,7 +34,7 @@ public class NetworkSection {
         frame.pack();
 
         try {
-            Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/IPSCANNER?useSSL=false","mahesh","P@ssw0rd");
+            Connection dbConnection = DriverManager.getConnection("jdbc:mysql://121.200.55.42:4063/ipscanner?useSSL=false","root","root");
             PreparedStatement preparedStatement = dbConnection.prepareStatement("select * from "+name);
             ResultSet resultSet = preparedStatement.executeQuery();
             table.setModel(model);

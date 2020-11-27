@@ -65,7 +65,7 @@ public class UIForm extends JFrame{
         table1.setShowVerticalLines(false);
 
         try{
-        Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/IPSCANNER?useSSL=false","mahesh","P@ssw0rd");
+        Connection dbConnection = DriverManager.getConnection("jdbc:mysql://121.200.55.42:4063/ipscanner?useSSL=false","root","root");
             if(!tableName.equals("")){
                 getnoteip.setText(tableName);
                 PreparedStatement preparedStatement = dbConnection.prepareStatement("DELETE FROM " + tableName);
@@ -97,7 +97,7 @@ public class UIForm extends JFrame{
                     for (int i = Integer.parseInt((nt[3])); i <= Integer.parseInt(br[3]); ++i) {
                             try {
                                 InetAddress addr = InetAddress.getByName(String.format("%s.%s.%s.%s", j, k, l, i));
-                                Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/IPSCANNER?useSSL=false","mahesh","P@ssw0rd");
+                                Connection dbConnection = DriverManager.getConnection("jdbc:mysql://121.200.55.42:4063/ipscanner?useSSL=false","root","root");
                                 String query = MessageFormat.format("insert into {0} (ip, Mac) values (?, ?)", tableName);
                                 PreparedStatement preparedStatement = dbConnection.prepareStatement(query);
                                 if (addr.isReachable(150)) {

@@ -36,9 +36,10 @@ public class Table{
         });
 
         try {
-            Connection dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/IPSCANNER?useSSL=false","mahesh","P@ssw0rd");
+            Connection dbConnection = DriverManager.getConnection("jdbc:mysql://121.200.55.42:4063/ipscanner?useSSL=false","root","root");
             PreparedStatement preparedStatement = dbConnection.prepareStatement("show tables");
             ResultSet resultSet = preparedStatement.executeQuery();
+
             table.setModel(model);
             model.addColumn("Location");
             while (resultSet.next()) {
@@ -59,6 +60,28 @@ public class Table{
         scanButton.addActionListener(actionEvent -> {
             frame.setVisible(false);
             new UIForm("");
+        });
+
+        deleteButton.addActionListener(actionEvent -> {
+            try {
+                Connection dbConnection = DriverManager.getConnection("jdbc:mysql://121.200.55.42:4063/ipscanner?useSSL=false","root","root");
+                PreparedStatement preparedStatement = dbConnection.prepareStatement("drop table "+tableName);
+                preparedStatement.executeUpdate();
+                preparedStatement = dbConnection.prepareStatement("show tables");
+                ResultSet resultSet = preparedStatement.executeQuery();
+                model = (DefaultTableModel) table.getModel();
+                model.setRowCount(0);
+                table.setModel(model);
+                tableName = "";
+                location.setText(tableName);
+                while (resultSet.next()) {
+                    String temp = resultSet.getString("Tables_in_IPSCANNER");
+                    if(!temp.equals("user"))
+                        model.addRow(new Object[]{temp});
+                }
+            } catch (Exception e) {
+                System.out.println("error while validating"+e);
+            }
         });
     }
 
